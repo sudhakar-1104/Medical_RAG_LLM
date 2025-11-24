@@ -80,6 +80,7 @@ docker run -d --name qdrant-rag -p 6333:6333 qdrant/qdrant
 
 This step processes all raw files, generates embeddings using the Gemini API, and indexes the resulting vectors into the Qdrant collection.
 
+
 Phase 1: Data Ingestion (Indexing)
 
 1.Data Placement: Place your medical documents (e.g., text, PDF, JSON, etc.) into the ./data/ directory.
@@ -91,17 +92,20 @@ python -m src.ingestion.ingest_data
 ```
   This script will instantiate the embedding model, connect to Qdrant, and build the vector index.
 
+  
 Phase 2: Query Execution
 
 Once the data is successfully indexed, you can run RAG queries against the knowledge base.
 
 A. Command Line Interface (CLI)
+
 Use the query_data.py script for direct, quick-test queries:
 
 ```bash
 python -m src.query_data
 ```
-🛑 Cleanup
+
+###🛑 Cleanup
 
 ```bash
 # Stop the container
@@ -111,7 +115,7 @@ docker stop qdrant-rag
 # docker rm qdrant-rag
 ```
 
-📂 Project Structure
+###📂 Project Structure
 
 ```bash
 Medical_RAG_LLM/
@@ -127,7 +131,7 @@ Medical_RAG_LLM/
 └── requirements.txt   # Project dependencies
 ```
 
-🧑‍💻 Author
+###🧑‍💻 Author
 
 1.Sudhakar - sudhakar-1104
 
@@ -139,6 +143,7 @@ Medical_RAG_LLM/
 
 
   
+
 
 
 

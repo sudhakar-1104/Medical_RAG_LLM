@@ -131,7 +131,7 @@ Medical_RAG_LLM/
 └── requirements.txt   # Project dependencies
 ```
 
-###🧑‍💻 Author
+🧑‍💻 Author
 
 1.Sudhakar - sudhakar-1104
 
@@ -143,6 +143,7 @@ Medical_RAG_LLM/
 
 
   
+
 
 
 

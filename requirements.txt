@@ -1,0 +1,29 @@
+# Core Data Handling and Tools
+numpy
+pandas
+scikit-learn
+python-dotenv             # For managing environment variables from the .env file
+
+# Text Processing & RAG Framework
+langchain                 # Core RAG library
+pypdf                     # For reading PDF files
+qdrant-client             # Official client for Qdrant
+langchain-qdrant          # LangChain integration with Qdrant
+
+# Embeddings & Models
+sentence-transformers     # For generating text embeddings (e.g., all-MiniLM-L6-v2)
+transformers              # Hugging Face models for general utilities
+
+# Multi-modal Processing
+Pillow                    # Image handling (PIL)
+opencv-python             # Computer Vision utilities
+librosa                   # Audio analysis library
+openai-whisper            # Excellent open-source model for Speech-to-Text
+
+# LLMs/API Access
+google-genai              # For utilizing the Gemini API
+openai                    # For utilizing the OpenAI API
+ollama                    # If you plan to use local models (optional)
+
+# Application Interface
+streamlit                 # Recommended for a simple, interactive demo interface

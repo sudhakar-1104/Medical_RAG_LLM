@@ -1,0 +1,22 @@
+# Python bytecode files
+**/__pycache__/
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables and secrets
+.env
+
+# Data and database files (often large and shouldn't be tracked)
+/data/
+/db/
+
+# Jupyter/Python notebooks (often large, though sometimes committed)
+/notebooks/
+
+# IDE/Editor specific files (e.g., VS Code)
+.vscode/
+
+# Operating system files
+.DS_Store

@@ -40,3 +40,117 @@ cd Medical_RAG_LLM
 # Create and activate a virtual environment
 python3 -m venv venv
 source venv/bin/activate
+```
+### 2.Dependency Installation
+
+Install all required Python libraries:
+
+```bash
+pip install -r requirements.txt
+
+```
+### 3.Environment Configuration
+
+Create a file named .env in the project root to store necessary API keys and configuration parameters. Do not commit this
+file to Git.
+
+```bash
+# --- API & MODEL KEYS ---
+GEMINI_API_KEY="[YOUR_GEMINI_API_KEY]" 
+ASSEMBLY_API_KEY="[YOUR_ASSEMBLY_API_KEY_IF_NEEDED]" 
+
+# --- QDRANT CONFIGURATION ---
+# Default Docker mapping
+QDRANT_URL="http://localhost:6333" 
+QDRANT_COLLECTION_NAME="Medical_Rsys_Collection" 
+
+# --- LOCAL STORAGE ---
+# Path for local data storage
+PERSIST_DIR="./db"
+```
+### 4. Database Deployment (Qdrant)
+
+Start the Qdrant vector database using Docker. This ensures a consistent and isolated environment matching the QDRANT_URL
+
+```bash
+docker run -d --name qdrant-rag -p 6333:6333 qdrant/qdrant
+```
+
+### 💻 Usage
+
+This step processes all raw files, generates embeddings using the Gemini API, and indexes the resulting vectors into the Qdrant collection.
+
+Phase 1: Data Ingestion (Indexing)
+
+1.Data Placement: Place your medical documents (e.g., text, PDF, JSON, etc.) into the ./data/ directory.
+
+2.Execute Ingestion:
+
+```bash
+python -m src.ingestion.ingest_data
+```
+  This script will instantiate the embedding model, connect to Qdrant, and build the vector index.
+
+Phase 2: Query Execution
+
+Once the data is successfully indexed, you can run RAG queries against the knowledge base.
+
+A. Command Line Interface (CLI)
+Use the query_data.py script for direct, quick-test queries:
+
+```bash
+python -m src.query_data
+```
+🛑 Cleanup
+
+```bash
+# Stop the container
+docker stop qdrant-rag
+
+# (Optional) Remove the container and associated data
+# docker rm qdrant-rag
+```
+
+📂 Project Structure
+
+```bash
+Medical_RAG_LLM/
+├── Config/            # Configuration files and constants
+├── data/              # Raw source documents (Input)
+├── db/                # Vector store index persistence directory (Output)
+├── src/
+│   ├── data_prep/     # Scripts for cleaning and transformation (text, image, audio)
+│   ├── ingestion/     # Logic for chunking, embedding, and indexing
+│   └── query_data.py  # Script for executing RAG search and generation
+├── .env               # Environment variables (Ignored by Git)
+├── app.py             # Main application entry point (e.g., Web UI)
+└── requirements.txt   # Project dependencies
+```
+
+🧑‍💻 Author
+
+1.Sudhakar - sudhakar-1104
+
+2.Shreya - 
+
+3.Kaniska - 
+
+4.Srinidhi - 
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

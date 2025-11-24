@@ -76,7 +76,7 @@ Start the Qdrant vector database using Docker. This ensures a consistent and iso
 docker run -d --name qdrant-rag -p 6333:6333 qdrant/qdrant
 ```
 
-### 💻 Usage
+ 💻 Usage
 
 This step processes all raw files, generates embeddings using the Gemini API, and indexes the resulting vectors into the Qdrant collection.
 
@@ -105,7 +105,7 @@ Use the query_data.py script for direct, quick-test queries:
 python -m src.query_data
 ```
 
-###🛑 Cleanup
+🛑 Cleanup
 
 ```bash
 # Stop the container
@@ -115,7 +115,7 @@ docker stop qdrant-rag
 # docker rm qdrant-rag
 ```
 
-###📂 Project Structure
+📂 Project Structure
 
 ```bash
 Medical_RAG_LLM/
@@ -143,6 +143,7 @@ Medical_RAG_LLM/
 
 
   
+
 
 
 

@@ -131,18 +131,50 @@ Medical_RAG_LLM/
 └── requirements.txt   # Project dependencies
 ```
 
+### Launching Services (API and UI)
+
+You need two terminal windows running concurrently:
+
+Terminal 1: Start the Backend API (FastAPI)
+Run the API server (default port: 8000):
+
+```bash
+# Run from project root
+uvicorn api_server:app --reload
+```
+
+This service handles all communication between the web browser and the RAG logic.
+
+Terminal 2: Start the Frontend Server (UI)
+Run a simple server to host the HTML/JS frontend (default port: 5500):
+```bash
+
+cd frontend
+python -m http.server 5500
+```
+
+Access the Dashboard
+Open your web browser and navigate to:
+
+```bash
+http://localhost:5500/
+```
+
+
+
 🧑‍💻 Author
 
 1.Sudhakar - sudhakar-1104
 
-2.Shreya - 
+2.Shreya - shreyy004
 
-3.Kaniska - 
+3.Kaniska - kaniskaD
 
 4.Srinidhi - 
 
 
   
+
 
 
 

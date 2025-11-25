@@ -2,6 +2,7 @@
 
 import os
 from typing import List, Dict, Any, Optional
+import contextlib # 🟢 MOVED IMPORT TO THE TOP
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.vector_stores.qdrant import QdrantVectorStore
 from llama_index.llms.gemini import Gemini
@@ -20,7 +21,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 PERSIST_DIR = "./data/db"
 
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2" 
-LLM_MODEL = "gemini-2.5-pro" # Use Pro for better adherence to complex persona/constraints
+LLM_MODEL = "gemini-2.5-pro" 
 
 # Global client variables for manual Gemini call
 AI_CLIENT = None
@@ -44,8 +45,6 @@ def initialize_rag_components(llm_model: str, embed_model_name: str):
     if not QDRANT_URL or not GEMINI_API_KEY:
         raise ValueError("QDRANT_URL or GEMINI_API_KEY not found in environment variables.")
 
-    # print("Initializing RAG components...") # Removed for clean output
-    
     # 1. Initialize Qdrant Client and Vector Store
     qdrant_client = QdrantClient(url=QDRANT_URL)
     vector_store = QdrantVectorStore(
@@ -135,18 +134,16 @@ def call_llm_for_generation(query: str, context: str, source_file: str, persona:
 
 
 # ----------------------------------------------------------------------
-# 3. Targeted Retrieval Function (Removed print statements)
+# 3. Targeted Retrieval Function
 # ----------------------------------------------------------------------
-def retrieve_targeted_context(index, user_query: str, target_filename: str, top_k: int = 20): # Increased default to 20
+def retrieve_targeted_context(index, user_query: str, target_filename: str, top_k: int = 20):
     """Retrieves context from the LlamaIndex index, filtered by a specific source file."""
-
-    # Removed print statement for searching/filtering
     
     qdrant_filter = Filter(
         must=[
             FieldCondition(
                 key="source", 
-                match=MatchValue(value=target_filename)
+                match=MatchValue(value=target_filename) # Match only the filename
             )
         ]
     )
@@ -162,10 +159,13 @@ def retrieve_targeted_context(index, user_query: str, target_filename: str, top_
 
 
 # ----------------------------------------------------------------------
-# 4. Main Execution Function (Clean Output)
+# 4. Main Execution Function (Returns data for API)
 # ----------------------------------------------------------------------
 def run_rag_query(user_query: str, file_path: str, persona: str, top_k: int = 20):
-    """Executes the full targeted RAG pipeline, strictly enforcing the file filter."""
+    """
+    Executes the full targeted RAG pipeline and RETURNS the structured report 
+    and source nodes for UI display.
+    """
     
     index, llm = initialize_rag_components(LLM_MODEL, EMBEDDING_MODEL_NAME)
     
@@ -181,11 +181,8 @@ def run_rag_query(user_query: str, file_path: str, persona: str, top_k: int = 20
     for node in nodes:
         if node.metadata.get('source') == target_filename:
             strictly_filtered_nodes.append(node)
-        # Removed the Filter Mismatch warning print statement
     
     nodes = strictly_filtered_nodes # Use the strictly filtered list
-    
-    # Removed debug prints for hits
     
     if not nodes:
         aggregated_context = f"No context retrieved from the targeted file: {target_filename}. Cannot generate analysis."
@@ -204,26 +201,13 @@ def run_rag_query(user_query: str, file_path: str, persona: str, top_k: int = 20
         aggregated_context = "\n\n--- Retrieved Chunk ---\n\n".join(context_list)
     
     # 5. Generate Structured Summary
-    # Removed print statement for calling Gemini
     final_answer = call_llm_for_generation(user_query, aggregated_context, target_filename, persona)
 
-    # 6. Output Results (Cleaned up format)
-    print("\n" + "=" * 70)
-    print("FINAL STRUCTURED MEDICAL ANALYSIS (Powered by Gemini)")
-    print("=" * 70)
-    print(final_answer)
-    print("-" * 70)
-    print(f"📄 Sources Used ({len(nodes)}):\n")
-    if nodes:
-        for i, node in enumerate(nodes):
-            print(f"[{i+1}] Source File: {node.metadata.get('source')} | Score: {node.score:.4f}")
-    else:
-        print("None.")
-    print("=" * 70)
+    # 🟢 API CHANGE: Return final_answer and nodes
+    return final_answer, nodes
 
 
 if __name__ == "__main__":
-    import contextlib # Import added for clean loading
     
     print("\n--- Multimodal RAG Query Agent (Targeted & Structured) ---")
     print("This agent filters context by file path and generates a structured medical report.")
@@ -233,13 +217,28 @@ if __name__ == "__main__":
         user_query = input("❓ Enter your question (e.g., 'What is the patient diagnosis?'): ").strip()
         file_path = input("📁 Enter target file path (e.g., data/raw/text/Case1.txt): ").strip()
         
-        # 🟢 NEW: Persona Selection
+        # 🟢 Persona Selection
         persona_choice = input("👤 Select output persona (D for Doctor/P for Patient): ").strip().upper()
         persona = 'DOCTOR' if persona_choice == 'D' else 'PATIENT'
 
         if user_query and file_path:
-            # We now pass the persona and use the higher top_k for robustness
-            run_rag_query(user_query, file_path, persona, top_k=20) 
+            # Call the pipeline and get the returned data
+            final_report, nodes = run_rag_query(user_query, file_path, persona, top_k=20) 
+            
+            # Print the final CLI output (for non-API testing)
+            print("\n" + "=" * 70)
+            print("FINAL STRUCTURED MEDICAL ANALYSIS (Powered by Gemini)")
+            print("=" * 70)
+            print(final_report)
+            print("-" * 70)
+            print(f"📄 Sources Used ({len(nodes)}):\n")
+            if nodes:
+                for i, node in enumerate(nodes):
+                    print(f"[{i+1}] Source File: {node.metadata.get('source')} | Score: {node.score:.4f}")
+            else:
+                print("None.")
+            print("=" * 70)
+
         else:
             print("Query and file path cannot be empty.")
     except Exception as e:
